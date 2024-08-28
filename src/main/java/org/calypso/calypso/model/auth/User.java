@@ -1,4 +1,4 @@
-package org.calypso.calypso.model;
+package org.calypso.calypso.model.auth;
 
 import jakarta.persistence.*;
 
