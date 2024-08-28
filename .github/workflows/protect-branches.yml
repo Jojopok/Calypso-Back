@@ -1,0 +1,19 @@
+name: Protect Specific Branches
+
+on:
+  delete:
+    branches:
+      - '*'
+
+jobs:
+  prevent-delete:
+    runs-on: ubuntu-latest
+    if: github.event.ref != 'refs/heads/develop' && github.event.ref != 'refs/heads/main'
+    steps:
+      - name: Check if the branch being deleted is protected
+        run: echo "Branch deleted: ${{ github.event.ref }}"
+      - name: Prevent deletion of the develop and main branches
+        if: github.event.ref == 'refs/heads/develop' || github.event.ref == 'refs/heads/main'
+        run: |
+          echo "Error: Attempted to delete protected branch ${{ github.event.ref }}"
+          exit 1
