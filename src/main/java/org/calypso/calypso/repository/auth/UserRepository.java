@@ -1,7 +1,6 @@
-package org.calypso.calypso.repository;
+package org.calypso.calypso.repository.auth;
 
-import jakarta.persistence.Id;
-import org.calypso.calypso.model.User;
+import org.calypso.calypso.model.auth.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
