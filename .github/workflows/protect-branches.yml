@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3  # Mise à jour de v2 à v3
+        uses: actions/checkout@v3
 
       - name: Configure git
         run: |
@@ -22,6 +22,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.CALYPSO_TOKEN }}
         run: |
           git fetch --prune
-          for branch in $(git branch -r --merged | grep -vE 'develop|HEAD' | sed 's/origin\///'); do
+          for branch in $(git branch -r --merged origin/develop | grep -vE 'develop|HEAD' | sed 's/origin\///'); do
             git push origin --delete $branch || echo "Failed to delete branch $branch"
           done
