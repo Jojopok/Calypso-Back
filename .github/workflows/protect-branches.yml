@@ -3,7 +3,6 @@ name: Delete Merged Branch
 on:
   push:
     branches:
-      - main
       - develop
 
 jobs:
@@ -23,6 +22,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.CALYPSO_TOKEN }}
         run: |
           git fetch --prune
-          for branch in $(git branch -r --merged | grep -vE 'main|develop|HEAD' | sed 's/origin\///'); do
+          for branch in $(git branch -r --merged | grep -vE 'develop|HEAD' | sed 's/origin\///'); do
             git push origin --delete $branch || echo "Failed to delete branch $branch"
           done
