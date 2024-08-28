@@ -1,4 +1,4 @@
-package org.calypso.calypso.dto;
+package org.calypso.calypso.dto.auth;
 
 public class UserDTO {
 
@@ -65,4 +65,5 @@ public class UserDTO {
     public void setOdysseyLink(String odysseyLink) {
         this.odysseyLink = odysseyLink;
     }
+
 }
