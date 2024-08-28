@@ -11,12 +11,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3  # Mise à jour de v2 à v3
 
       - name: Configure git
         run: |
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git config --global user.name 'Jojopok'
+          git config --global user.email 'zaiajonathan@gmail.com'
 
       - name: Delete merged branches
         env:
@@ -24,5 +24,5 @@ jobs:
         run: |
           git fetch --prune
           for branch in $(git branch -r --merged | grep -vE 'main|develop|HEAD' | sed 's/origin\///'); do
-            git push origin --delete $branch
+            git push origin --delete $branch || echo "Failed to delete branch $branch"
           done
