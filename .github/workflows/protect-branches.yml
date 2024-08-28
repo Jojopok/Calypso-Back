@@ -20,7 +20,7 @@ jobs:
 
       - name: Delete merged branches
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.CALYPSO_TOKEN }}
         run: |
           git fetch --prune
           for branch in $(git branch -r --merged | grep -vE 'main|develop|HEAD' | sed 's/origin\///'); do
