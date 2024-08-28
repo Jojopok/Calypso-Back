@@ -1,8 +1,8 @@
-package org.calypso.calypso.mapper;
+package org.calypso.calypso.mapper.auth;
 
-import org.calypso.calypso.dto.UserDTO;
-import org.calypso.calypso.model.User;
-import org.calypso.calypso.repository.UserRepository;
+import org.calypso.calypso.dto.auth.UserDTO;
+import org.calypso.calypso.model.auth.User;
+import org.calypso.calypso.repository.auth.UserRepository;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -14,7 +14,7 @@ public class UserMapper {
         this.userRepository = userRepository;
     }
 
-    private UserDTO convertToDTO(User user) {
+    public UserDTO convertToDTO(User user) {
         UserDTO userDTO = new UserDTO();
         userDTO.setId(user.getId());
         userDTO.setFirstName(user.getFirstName());
