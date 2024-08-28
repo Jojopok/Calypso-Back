@@ -1,19 +1,28 @@
-name: Protect Specific Branches
+name: Delete Merged Branch
 
 on:
-  delete:
+  push:
     branches:
-      - '*'
+      - main
+      - develop
 
 jobs:
-  prevent-delete:
+  delete-merged-branch:
     runs-on: ubuntu-latest
-    if: github.event.ref != 'refs/heads/develop' && github.event.ref != 'refs/heads/main'
     steps:
-      - name: Check if the branch being deleted is protected
-        run: echo "Branch deleted: ${{ github.event.ref }}"
-      - name: Prevent deletion of the develop and main branches
-        if: github.event.ref == 'refs/heads/develop' || github.event.ref == 'refs/heads/main'
+      - name: Checkout repository
+        uses: actions/checkout@v3  # Mise à jour de v2 à v3
+
+      - name: Configure git
         run: |
-          echo "Error: Attempted to delete protected branch ${{ github.event.ref }}"
-          exit 1
+          git config --global user.name 'Jojopok'
+          git config --global user.email 'zaiajonathan@gmail.com'
+
+      - name: Delete merged branches
+        env:
+          GITHUB_TOKEN: ${{ secrets.CALYPSO_TOKEN }}
+        run: |
+          git fetch --prune
+          for branch in $(git branch -r --merged | grep -vE 'main|develop|HEAD' | sed 's/origin\///'); do
+            git push origin --delete $branch || echo "Failed to delete branch $branch"
+          done
