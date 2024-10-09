@@ -47,6 +47,14 @@ public class User implements UserDetails {
     )
     private Set<Role> roles = new HashSet<>();
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "T_AUTH_Promo_User",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "promo_id")
+    )
+    private Set<Promo> promos = new HashSet<>();
+
     public Set<Role> getRoles() {
         return roles;
     }
@@ -120,6 +128,14 @@ public class User implements UserDetails {
         this.odysseyLink = odysseyLink;
     }
 
+    public Set<Promo> getPromos() {
+        return promos;
+    }
+
+    public void setPromos(Set<Promo> promos) {
+        this.promos = promos;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream()
@@ -151,4 +167,6 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+
 }
