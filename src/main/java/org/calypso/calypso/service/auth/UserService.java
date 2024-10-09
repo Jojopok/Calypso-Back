@@ -1,64 +1,48 @@
 package org.calypso.calypso.service.auth;
 
-import org.springframework.stereotype.Service;
-import org.calypso.calypso.dto.auth.UserDTO;
-import org.calypso.calypso.mapper.auth.UserMapper;
+import org.calypso.calypso.mapper.auth.RoleMapper;
+import org.calypso.calypso.model.auth.Role;
 import org.calypso.calypso.model.auth.User;
+import org.calypso.calypso.repository.auth.RoleRepository;
 import org.calypso.calypso.repository.auth.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
-    private final UserMapper userMapper;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final RoleMapper roleMapper;
 
-    public UserService(UserRepository userRepository, UserMapper userMapper) {
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, RoleMapper roleMapper) {
         this.userRepository = userRepository;
-        this.userMapper = userMapper;
+        this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.roleMapper = roleMapper;
     }
 
-    public List<UserDTO> getAllUsers() {
-        List<User> users = userRepository.findAll();
-        return users.stream().map(userMapper::convertToDTO).collect(Collectors.toList());
-    }
-
-    public UserDTO getUserById(Long id) {
-        User user = userRepository.findById(id).orElse(null);
-        if (user == null) {
-            return null;
+    public User registerUser(String email, String password, String firstName, String lastName, String odysseyLink) {
+        if (userRepository.existsByEmail(email)) {
+            throw new RuntimeException("Cet email est déjà utilisé");
         }
-        return userMapper.convertToDTO(user);
-    }
 
-    public UserDTO createUser(User user) {
-        User savedUser = userRepository.save(user);
-        return userMapper.convertToDTO(savedUser);
-    }
+        User user = new User();
+        user.setEmail(email);
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setPassword(passwordEncoder.encode(password));
+        user.setOdysseyLink(odysseyLink);
 
-    public UserDTO updateUser(Long id, User userDetails) {
-        User user = userRepository.findById(id).orElse(null);
-        if (user == null) {
-            return null;
+        Role userRole = roleRepository.findByRole("User");
+        if (userRole == null) {
+            throw new RuntimeException("Le rôle 'User' n'existe pas");
         }
-        user.setFirstName(userDetails.getFirstName());
-        user.setLastName(userDetails.getLastName());
-        user.setEmail(userDetails.getEmail());
-        user.setAvatar(userDetails.getAvatar());
-        user.setPhoneNumber(userDetails.getPhoneNumber());
-        user.setOdysseyLink(userDetails.getOdysseyLink());
-        User updatedUser = userRepository.save(user);
-        return userMapper.convertToDTO(updatedUser);
-    }
+        user.setRoles(Set.of(userRole));
 
-    public boolean deleteUser(Long id) {
-        User user = userRepository.findById(id).orElse(null);
-        if (user == null) {
-            return false;
-        }
-        userRepository.delete(user);
-        return true;
+        return userRepository.save(user);
     }
 }

@@ -1,28 +1,45 @@
 package org.calypso.calypso.mapper.auth;
 
 import org.calypso.calypso.dto.auth.UserDTO;
+import org.calypso.calypso.dto.auth.UserRegistrationDTO;
 import org.calypso.calypso.model.auth.User;
-import org.calypso.calypso.repository.auth.UserRepository;
 import org.springframework.stereotype.Component;
+
+import java.util.stream.Collectors;
 
 @Component
 public class UserMapper {
 
-    private final UserRepository userRepository;
-
-    public UserMapper(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public User toEntity(UserRegistrationDTO dto) {
+        User user = new User();
+        user.setEmail(dto.getEmail());
+        user.setFirstName(dto.getFirstName());
+        user.setLastName(dto.getLastName());
+        user.setPassword(dto.getPassword());
+        user.setOdysseyLink(dto.getOdysseyLink());
+        return user;
     }
 
-    public UserDTO convertToDTO(User user) {
-        UserDTO userDTO = new UserDTO();
-        userDTO.setId(user.getId());
-        userDTO.setFirstName(user.getFirstName());
-        userDTO.setLastName(user.getLastName());
-        userDTO.setEmail(user.getEmail());
-        userDTO.setAvatar(user.getAvatar());
-        userDTO.setPhoneNumber(user.getPhoneNumber());
-        userDTO.setOdysseyLink(user.getOdysseyLink());
-        return userDTO;
+    public UserRegistrationDTO toDto(User user) {
+        UserRegistrationDTO dto = new UserRegistrationDTO();
+        dto.setEmail(user.getEmail());
+        dto.setFirstName(user.getFirstName());
+        dto.setLastName(user.getLastName());
+        dto.setPassword(user.getPassword());
+        dto.setOdysseyLink(user.getOdysseyLink());
+        return dto;
+    }
+
+    public UserDTO toUserDTO(User user) {
+        UserDTO dto = new UserDTO();
+        dto.setId(user.getId());
+        dto.setFirstName(user.getFirstName());
+        dto.setLastName(user.getLastName());
+        dto.setEmail(user.getEmail());
+        dto.setAvatar(user.getAvatar());
+        dto.setPhoneNumber(user.getPhoneNumber());
+        dto.setOdysseyLink(user.getOdysseyLink());
+        dto.setRoles(user.getRoles().stream().map(role -> role.getRole()).collect(Collectors.toSet()));
+        return dto;
     }
 }
