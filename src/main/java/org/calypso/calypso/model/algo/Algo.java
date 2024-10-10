@@ -3,6 +3,7 @@ package org.calypso.calypso.model.algo;
 import jakarta.persistence.*;
 
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Table(name = "T_ALGO_Algo")
@@ -34,6 +35,14 @@ public class Algo {
     @ManyToOne
     @JoinColumn(name = "difficulty_id")
     private Difficulty difficulty;
+
+    @ManyToMany
+    @JoinTable(
+            name = "T_ALGO_Algo_Type",
+            joinColumns = @JoinColumn(name = "algo_id"),
+            inverseJoinColumns = @JoinColumn(name = "type_id")
+    )
+    private Set<Type> types;
 
     public Long getId() {
         return id;
@@ -107,4 +116,11 @@ public class Algo {
         this.difficulty = difficulty;
     }
 
+    public Set<Type> getTypes() {
+        return types;
+    }
+
+    public void setTypes(Set<Type> types) {
+        this.types = types;
+    }
 }
