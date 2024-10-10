@@ -8,6 +8,7 @@ import org.calypso.calypso.repository.auth.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -44,5 +45,9 @@ public class UserService {
         user.setRoles(Set.of(userRole));
 
         return userRepository.save(user);
+    }
+
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
 }

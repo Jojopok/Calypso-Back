@@ -1,12 +1,10 @@
 package org.calypso.calypso.model.algo;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import org.calypso.calypso.model.auth.User;
+
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Table(name = "T_ALGO_Algo")
@@ -35,8 +33,21 @@ public class Algo {
     @Column(name = "updated_at")
     private Date updatedAt;
 
-    // Getters and Setters
+    @ManyToOne
+    @JoinColumn(name = "difficulty_id")
+    private Difficulty difficulty;
 
+    @ManyToMany
+    @JoinTable(
+            name = "T_ALGO_Algo_Type",
+            joinColumns = @JoinColumn(name = "algo_id"),
+            inverseJoinColumns = @JoinColumn(name = "type_id")
+    )
+    private Set<Type> types;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     public Long getId() {
         return id;
@@ -100,5 +111,29 @@ public class Algo {
 
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Difficulty getDifficulty() {
+        return difficulty;
+    }
+
+    public void setDifficulty(Difficulty difficulty) {
+        this.difficulty = difficulty;
+    }
+
+    public Set<Type> getTypes() {
+        return types;
+    }
+
+    public void setTypes(Set<Type> types) {
+        this.types = types;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
