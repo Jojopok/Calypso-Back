@@ -1,7 +1,8 @@
 package org.calypso.calypso.dto.auth;
 
-public class UserDTO {
+import java.util.Set;
 
+public class UserDTO {
     private Long id;
     private String firstName;
     private String lastName;
@@ -9,7 +10,9 @@ public class UserDTO {
     private String avatar;
     private Integer phoneNumber;
     private String odysseyLink;
+    private Set<String> roles;
 
+    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -66,4 +69,11 @@ public class UserDTO {
         this.odysseyLink = odysseyLink;
     }
 
+    public Set<String> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<String> roles) {
+        this.roles = roles;
+    }
 }
