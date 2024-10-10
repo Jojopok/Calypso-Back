@@ -1,6 +1,7 @@
 package org.calypso.calypso.controller.algo;
 
 import org.calypso.calypso.dto.algo.AlgoDTO;
+import org.calypso.calypso.mapper.algo.AlgoMapper;
 import org.calypso.calypso.model.algo.Algo;
 import org.calypso.calypso.repository.algo.AlgoRepository;
 import org.calypso.calypso.service.algo.AlgoService;
@@ -15,22 +16,12 @@ import java.util.stream.Collectors;
 public class AlgoController {
     private final AlgoRepository algoRepository;
     private final AlgoService algoService;
+    private final AlgoMapper algoMapper;
 
-    public AlgoController(AlgoRepository algoRepository, AlgoService algoService) {
+    public AlgoController(AlgoRepository algoRepository, AlgoService algoService, AlgoMapper algoMapper) {
         this.algoRepository = algoRepository;
         this.algoService = algoService;
-    }
-
-    private AlgoDTO convertToDTO(Algo algo) {
-        AlgoDTO algoDTO = new AlgoDTO();
-        algoDTO.setId(algo.getId());
-        algoDTO.setTitle(algo.getTitle());
-        algoDTO.setContent(algo.getContent());
-        algoDTO.setAnswer(algo.getAnswer());
-        algoDTO.setIsVisible(algo.getIsVisible());
-        algoDTO.setCreatedAt(algo.getCreatedAt());
-        algoDTO.setUpdatedAt(algo.getUpdatedAt());
-        return algoDTO;
+        this.algoMapper = algoMapper;
     }
 
     @GetMapping
@@ -39,7 +30,7 @@ public class AlgoController {
         if (algos.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
-        List<AlgoDTO> algoDTOs = algos.stream().map(this::convertToDTO).collect(Collectors.toList());
+        List<AlgoDTO> algoDTOs = algos.stream().map(algoMapper::convertToDTO).collect(Collectors.toList());
         return ResponseEntity.ok(algoDTOs);
     }
 
@@ -49,18 +40,12 @@ public class AlgoController {
         if (algo == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(convertToDTO(algo));
+        return ResponseEntity.ok(algoMapper.convertToDTO(algo));
     }
 
     @PostMapping
     public ResponseEntity<AlgoDTO> createAlgo(@RequestBody AlgoDTO algoDTO) {
-        Algo algo = new Algo();
-        algo.setTitle(algoDTO.getTitle());
-        algo.setContent(algoDTO.getContent());
-        algo.setAnswer(algoDTO.getAnswer());
-        algo.setIsVisible(algoDTO.getIsVisible());
-        algo.setCreatedAt(algoDTO.getCreatedAt());
-        algo.setUpdatedAt(algoDTO.getUpdatedAt());
+        Algo algo = algoMapper.convertToEntity(algoDTO);
         AlgoDTO createdAlgoDTO = algoService.createAlgo(algo);
         if (createdAlgoDTO == null) {
             return ResponseEntity.badRequest().build();
@@ -70,13 +55,7 @@ public class AlgoController {
 
     @PutMapping("/{id}")
     public ResponseEntity<AlgoDTO> updateAlgo(@PathVariable Long id, @RequestBody AlgoDTO algoDTO) {
-        Algo algo = new Algo();
-        algo.setTitle(algoDTO.getTitle());
-        algo.setContent(algoDTO.getContent());
-        algo.setAnswer(algoDTO.getAnswer());
-        algo.setIsVisible(algoDTO.getIsVisible());
-        algo.setCreatedAt(algoDTO.getCreatedAt());
-        algo.setUpdatedAt(algoDTO.getUpdatedAt());
+        Algo algo = algoMapper.convertToEntity(algoDTO);
         AlgoDTO updatedAlgoDTO = algoService.updateAlgo(id, algo);
         if (updatedAlgoDTO == null) {
             return ResponseEntity.notFound().build();

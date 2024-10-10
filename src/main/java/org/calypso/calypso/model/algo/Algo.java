@@ -1,6 +1,7 @@
 package org.calypso.calypso.model.algo;
 
 import jakarta.persistence.*;
+import org.calypso.calypso.model.auth.User;
 
 import java.util.Date;
 import java.util.Set;
@@ -43,6 +44,10 @@ public class Algo {
             inverseJoinColumns = @JoinColumn(name = "type_id")
     )
     private Set<Type> types;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     public Long getId() {
         return id;
@@ -122,5 +127,13 @@ public class Algo {
 
     public void setTypes(Set<Type> types) {
         this.types = types;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
