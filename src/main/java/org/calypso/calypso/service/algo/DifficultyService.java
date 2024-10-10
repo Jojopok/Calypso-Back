@@ -19,7 +19,7 @@ public class DifficultyService {
         this.difficultyRepository = difficultyRepository;
         this.difficultyMapper = difficultyMapper;
     }
-
+y
     public List<DifficultyDTO> getAllDifficulties() {
         List<Difficulty> difficulties = difficultyRepository.findAll();
         return difficulties.stream().map(difficultyMapper::convertToDTO).collect(Collectors.toList());
