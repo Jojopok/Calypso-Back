@@ -3,6 +3,7 @@ package org.calypso.calypso.controller.auth;
 import org.calypso.calypso.dto.auth.UserDTO;
 import org.calypso.calypso.mapper.auth.UserMapper;
 import org.calypso.calypso.model.auth.User;
+import org.calypso.calypso.security.JwtService;
 import org.calypso.calypso.service.auth.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,9 @@ class UserControllerTest {
 
     @MockBean
     private UserMapper userMapper;
+
+    @MockBean
+    private JwtService jwtService;
 
     @Test
     void testGetAllUsers() throws Exception {
