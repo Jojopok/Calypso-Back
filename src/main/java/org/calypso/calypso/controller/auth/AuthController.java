@@ -7,11 +7,14 @@ import org.calypso.calypso.mapper.auth.UserMapper;
 import org.calypso.calypso.model.auth.User;
 import org.calypso.calypso.security.AuthenticationService;
 import org.calypso.calypso.service.auth.UserService;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -42,11 +45,19 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> authenticate(@RequestBody UserLoginDTO userLoginDTO) {
+    public ResponseEntity<Map<String, String>> authenticate(@RequestBody UserLoginDTO userLoginDTO) {
         String token = authenticationService.authenticate(
                 userLoginDTO.getEmail(),
                 userLoginDTO.getPassword()
         );
-        return ResponseEntity.ok(token);
+
+        // Encapsuler le token dans un objet JSON
+        Map<String, String> response = new HashMap<>();
+        response.put("token", token);
+
+        // Retourner le token sous forme de JSON avec le bon Content-Type
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_TYPE, "application/json")
+                .body(response);
     }
 }
