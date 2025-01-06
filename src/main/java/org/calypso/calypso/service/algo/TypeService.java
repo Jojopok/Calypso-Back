@@ -49,11 +49,10 @@ public class TypeService {
     }
 
     public boolean deleteType(Long id) {
-        Type type = typeRepository.findById(id).orElse(null);
-        if (type == null) {
-            return false;
+        if (typeRepository.existsById(id)) {
+            typeRepository.deleteById(id);
+            return true;
         }
-        typeRepository.delete(type);
-        return true;
+        return false;
     }
 }
