@@ -1,10 +1,12 @@
 package org.calypso.calypso.service.auth;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.calypso.calypso.mapper.auth.RoleMapper;
 import org.calypso.calypso.model.auth.Role;
 import org.calypso.calypso.model.auth.User;
 import org.calypso.calypso.repository.auth.RoleRepository;
 import org.calypso.calypso.repository.auth.UserRepository;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -47,7 +49,23 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    public User getUserById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Utilisateur non trouvé avec l'ID : " + id));
+    }
+
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Utilisateur non trouvé avec l'email : " + email));
+    }
+
     public List<User> getAllUsers() {
         return userRepository.findAll();
+    }
+
+    public Long getUserIdByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Utilisateur non trouvé avec l'email : " + email))
+                .getId();
     }
 }
