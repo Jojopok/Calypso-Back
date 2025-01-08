@@ -30,7 +30,7 @@ public class SecurityConfig {
         http.csrf().disable()
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll() // Permettre l'accès public aux endpoints sous /auth/
+                        .requestMatchers("/auth/**", "/users/**").permitAll() // Permettre l'accès public aux endpoints sous /auth/
                         .anyRequest().authenticated() // Tous les autres endpoints nécessitent une authentification
                 )
                 .userDetailsService(customUserDetailsService)
