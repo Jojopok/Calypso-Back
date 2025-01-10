@@ -1,9 +1,11 @@
 package org.calypso.calypso.controller.auth;
 
+import io.jsonwebtoken.Claims;
 import org.calypso.calypso.dto.auth.UserDTO;
 import org.calypso.calypso.dto.auth.UserLoginDTO;
 import org.calypso.calypso.dto.auth.UserRegistrationDTO;
 import org.calypso.calypso.mapper.auth.UserMapper;
+import org.calypso.calypso.model.auth.Promo;
 import org.calypso.calypso.model.auth.User;
 import org.calypso.calypso.security.AuthenticationService;
 import org.calypso.calypso.security.JwtService;
@@ -54,8 +56,8 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> authenticate(@RequestBody UserLoginDTO userLoginDTO) {
-        // Authentification et récupération de l'utilisateur
+    public ResponseEntity<Map<String, Object>> authenticate(@RequestBody UserLoginDTO userLoginDTO) {
+        // Authentifier l'utilisateur
         String token = authenticationService.authenticate(
                 userLoginDTO.getEmail(),
                 userLoginDTO.getPassword()
@@ -64,26 +66,33 @@ public class AuthController {
         // Récupérer l'utilisateur complet depuis la base de données
         User user = userService.getUserByEmail(userLoginDTO.getEmail());
 
-        // Récupérer les IDs des rôles de l'utilisateur
-        Set<Long> roleIds = user.getRoleIds();
+        // Convertir l'utilisateur en UserDTO avec les rôles sous forme de chaînes de caractères
+        UserDTO userDTO = userMapper.toUserDTO(user);
 
-        // Générer le token avec l'ID de l'utilisateur, l'email et les IDs des rôles
-        String tokenWithDetails = jwtService.generateTokenWithUserId(
-                user.getId(), user.getEmail(), roleIds
-        );
+        // Générer le token avec les détails de l'utilisateur
+        String tokenWithDetails = jwtService.generateToken(user.getId(), user.getEmail(), user.getRoleIds());
 
-        // Construire la réponse JSON avec le token
-        Map<String, String> response = new HashMap<>();
-        response.put("token", tokenWithDetails);
+        // Construire la réponse JSON avec le token et le UserDTO
+        Map<String, Object> response = new HashMap<>();
+        response.put("token", tokenWithDetails);  // Le token JWT
+        response.put("user", userDTO);  // L'objet UserDTO avec les informations de l'utilisateur
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_TYPE, "application/json")
                 .body(response);
     }
 
+    @GetMapping("/profil")
+    public UserDTO getCurrentProfile(@RequestHeader("Authorization") String token) {
+        // Extraire l'email du token JWT (Assume que le token est sous forme "Bearer <token>")
+        String email = jwtService.extractEmailFromToken(token);
 
+        // Récupérer l'utilisateur à partir de l'email
+        User user = userService.getUserByEmail(email);
 
-
+        // Convertir l'utilisateur en DTO en utilisant le SerMapper
+        return userMapper.toUserDTO(user);
+    }
 
     @Autowired
     public void setUserController(UserController userController) {

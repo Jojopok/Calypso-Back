@@ -21,32 +21,35 @@ public class JwtService {
     private long jwtExpiration;
 
     /**
-     * Générer un token JWT avec les rôles depuis UserDetails
-     */
-    public String generateToken(UserDetails userDetails) {
-        return Jwts.builder()
-                .setSubject(userDetails.getUsername())
-                .claim("roles", userDetails.getAuthorities())
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
-                .signWith(SignatureAlgorithm.HS256, secretKey.getBytes())  // Utilisation sécurisée
-                .compact();
-    }
-
-    /**
      * Générer un token JWT avec uniquement l'ID utilisateur
      */
-    public String generateTokenWithUserId(Long userId, String email, Set<Long> roleIds) {
+    public String generateToken(Long userId, String email, Set<Long> roleIds) {
         return Jwts.builder()
                 .setSubject(String.valueOf(userId))  // ID utilisateur dans le `sub`
-                .claim("email", email)               // Ajout de l'email
-                .claim("roleIds", roleIds)           // Ajout des IDs de rôles dans le token
+                .claim("email", email)
+                .claim("roleIds", roleIds)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
-                .signWith(SignatureAlgorithm.HS256, secretKey.getBytes())  // Clé sécurisée
+                .signWith(SignatureAlgorithm.HS256, secretKey.getBytes())
                 .compact();
     }
 
+    public String extractEmailFromToken(String token) {
+        // Ici tu extraies l'email à partir du token JWT, avec la bibliothèque JWT que tu utilises
+        // Exemple avec 'io.jsonwebtoken.Jwts' et 'secretKey'
+
+        try {
+            String jwtToken = token.substring(7); // Retirer "Bearer " du token
+            Claims claims = Jwts.parser()
+                    .setSigningKey(secretKey.getBytes())
+                    .parseClaimsJws(jwtToken)
+                    .getBody();
+
+            return claims.get("email", String.class); // Extraire l'email du token
+        } catch (Exception e) {
+            throw new RuntimeException("Erreur lors de l'extraction de l'email depuis le token", e);
+        }
+    }
 
     /**
      * Extraire les claims depuis le token

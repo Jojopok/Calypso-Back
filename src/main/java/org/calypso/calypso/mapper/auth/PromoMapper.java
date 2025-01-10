@@ -1,8 +1,13 @@
 package org.calypso.calypso.mapper.auth;
 
 import org.calypso.calypso.dto.auth.PromoDTO;
+import org.calypso.calypso.dto.auth.UserDTO;
 import org.calypso.calypso.model.auth.Promo;
+import org.calypso.calypso.model.auth.User;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class PromoMapper {

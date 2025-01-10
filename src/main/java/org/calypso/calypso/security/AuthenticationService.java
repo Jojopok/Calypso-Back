@@ -6,6 +6,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import static org.springframework.web.servlet.function.ServerResponse.ok;
+
 @Service
 public class AuthenticationService {
 
@@ -22,6 +24,6 @@ public class AuthenticationService {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(email, password)
         );
-        return jwtService.generateToken((UserDetails) authentication.getPrincipal());
+        return ok().toString();
     }
 }

@@ -1,7 +1,10 @@
 package org.calypso.calypso.controller.auth;
 
 import org.calypso.calypso.dto.auth.PromoDTO;
-import org.calypso.calypso.model.auth.Promo;
+import org.calypso.calypso.dto.auth.UserDTO;
+import org.calypso.calypso.mapper.auth.*;
+import org.calypso.calypso.model.auth.*;
+import org.calypso.calypso.repository.auth.UserRepository;
 import org.calypso.calypso.service.auth.PromoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,9 +17,15 @@ import java.util.stream.Collectors;
 public class PromoController {
 
     private final PromoService promoService;
+    private final PromoMapper promoMapper;
+    private final UserMapper userMapper;
+    private final UserRepository userRepository;
 
-    public PromoController(PromoService promoService) {
+    public PromoController(PromoService promoService, PromoMapper promoMapper, UserMapper userMapper, UserRepository userRepository) {
         this.promoService = promoService;
+        this.promoMapper = promoMapper;
+        this.userMapper = userMapper;
+        this.userRepository = userRepository;
     }
 
     private PromoDTO convertToDTO(Promo promo) {
@@ -83,5 +92,11 @@ public class PromoController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{promoId}/members")
+    public List<UserDTO> getPromoMembers(@PathVariable Long promoId) {
+        List<User> users = userRepository.findByPromos(promoId);
+        return (userMapper.toUserDTOList(users));
     }
 }
