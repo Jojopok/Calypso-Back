@@ -1,11 +1,21 @@
-# Utilise l'image Java 21 basée sur Ubuntu Jammy
-FROM eclipse-temurin:21-jdk-jammy
-
-# Définit un répertoire de travail
+# Étape 1 : Image Maven pour compiler le projet
+FROM maven:3.9.4-eclipse-temurin-21 AS builder
 WORKDIR /app
 
-# Copie le fichier jar dans le conteneur
-COPY target/calypso-0.0.1-SNAPSHOT.jar app.jar
+# Copier le fichier pom.xml et télécharger les dépendances
+COPY pom.xml .
+RUN mvn dependency:go-offline -B
 
-# Définit la commande pour exécuter l'application
+# Copier tout le projet et compiler
+COPY . .
+RUN mvn clean package -DskipTests
+
+# Étape 2 : Image légère pour exécuter l'application
+FROM eclipse-temurin:21-jdk-jammy
+WORKDIR /app
+
+# Copier le fichier jar depuis l'étape de construction
+COPY --from=builder /app/target/calypso-0.0.1-SNAPSHOT.jar app.jar
+
+# Commande pour lancer l'application
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]
