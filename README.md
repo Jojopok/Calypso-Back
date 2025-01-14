@@ -14,12 +14,12 @@
    ```
 
 2. **Configurer `application.properties`** :  
-   Créez un fichier `src/main/resources/application.properties` en copiant le contenu de `src/main/resources/application.properties.example` et en modifiant les informations avec vos propres paramètres :
+   Créez un fichier `src/main/resources/application.properties` en copiant le contenu de `src/main/resources/application-example.properties` et en modifiant les informations avec vos propres paramètres :
 
    ```properties
    spring.application.name=Calypso
 
-   spring.datasource.url=jdbc:mysql://localhost:3306/db_calypso?createDatabaseIfNotExist=true
+   spring.datasource.url=jdbc:mysql://db:3306/appdb?createDatabaseIfNotExist=true
    spring.datasource.username=your_database_username
    spring.datasource.password=your_database_password
 
@@ -41,6 +41,50 @@
    ```sh
    docker compose up
    ```
+   
+# Accéder à la base de données MySQL
+## Connexion au conteneur MySQL
+
+1. **Ouvrir une session dans le conteneur :** :
+
+    ```sh
+   docker exec -it calypso-back-db-1 bash
+   ```
+
+2. **Lancer le client MySQL :** Une fois dans le conteneur, exécutez la commande suivante pour vous connecter à la base de données  :
+
+    ```sh
+   mysql -u root -p
+   ```
+   Entrez le mot de passe défini dans votre fichier docker-compose.yml (par défaut : password).
+
+3. **Afficher les bases de données :** Une fois connecté, exécutez  :
+
+    ```sql
+   SHOW DATABASES;
+   ```
+
+4. **Basculer sur la base de données appdb :** 
+
+    ```sql
+   USE appdb;
+   ```
+   
+5. **Afficher les tables :** 
+
+    ```sql
+   SHOW TABLES;
+   ```
+
+## Insérer des données dans les tables
+
+1. **Ajouter un rôle ADMI et un rôle USER :** :
+
+    ```sql
+   INSERT INTO t_auth_role (role) VALUES ('ADMIN');
+   INSERT INTO t_auth_role (role) VALUES ('USER');
+   ```
+
 
 ## Accéder à l'application
 
