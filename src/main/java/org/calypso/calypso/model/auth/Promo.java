@@ -1,5 +1,6 @@
 package org.calypso.calypso.model.auth;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.util.Set;
 
@@ -27,6 +28,7 @@ public class Promo {
     private boolean isVisible;
 
     @ManyToMany(mappedBy = "promos")
+    @JsonIgnore
     private Set<User> users;
 
     public Long getId() {

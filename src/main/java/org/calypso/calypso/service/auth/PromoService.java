@@ -1,7 +1,10 @@
 package org.calypso.calypso.service.auth;
 
 import org.calypso.calypso.model.auth.Promo;
+import org.calypso.calypso.model.auth.User;
 import org.calypso.calypso.repository.auth.PromoRepository;
+import org.calypso.calypso.repository.auth.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,6 +13,9 @@ import java.util.List;
 public class PromoService {
 
     private final PromoRepository promoRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     public PromoService(PromoRepository promoRepository) {
         this.promoRepository = promoRepository;

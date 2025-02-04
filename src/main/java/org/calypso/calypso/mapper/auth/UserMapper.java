@@ -5,6 +5,8 @@ import org.calypso.calypso.dto.auth.UserRegistrationDTO;
 import org.calypso.calypso.model.auth.User;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
@@ -39,7 +41,24 @@ public class UserMapper {
         dto.setAvatar(user.getAvatar());
         dto.setPhoneNumber(user.getPhoneNumber());
         dto.setOdysseyLink(user.getOdysseyLink());
-        dto.setRoles(user.getRoles().stream().map(role -> role.getRole()).collect(Collectors.toSet()));
+
+        // Convertir les rôles en strings
+        dto.setRoles(user.getRoles().stream()
+                .map(role -> role.getRole())  // Extraire le nom du rôle
+                .collect(Collectors.toSet()));
+
+        // Convertir les promos en objets Promo complets
+        dto.setPromos(new HashSet<>(user.getPromos()));  // Ajouter directement les objets Promo
+
         return dto;
     }
+
+    // Méthode pour convertir une liste d'utilisateurs en liste de UserDTO
+    public List<UserDTO> toUserDTOList(List<User> users) {
+        // Utiliser un Stream pour convertir chaque utilisateur en UserDTO
+        return users.stream()
+                .map(this::toUserDTO)  // Appel de la méthode toUserDTO pour chaque utilisateur
+                .collect(Collectors.toList());  // Collecter le résultat dans une liste
+    }
+
 }
