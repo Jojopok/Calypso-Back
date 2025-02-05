@@ -68,4 +68,9 @@ public class UserService {
                 .orElseThrow(() -> new UsernameNotFoundException("Utilisateur non trouvé avec l'email : " + email))
                 .getId();
     }
+
+    // Mettre à jour un utilisateur
+    public User updateUser(User user) {
+        return userRepository.save(user);
+    }
 }
