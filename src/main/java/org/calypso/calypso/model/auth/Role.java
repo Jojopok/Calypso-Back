@@ -15,6 +15,9 @@ public class Role {
     @Column(name = "role", nullable = false, unique = true)
     private String role;
 
+    @Column(name = "color", nullable = true)
+    private String color;
+
     @ManyToMany(mappedBy = "roles")
     @JsonIgnore
     private Set<User> users;
@@ -41,5 +44,12 @@ public class Role {
 
     public void setUsers(Set<User> users) {
         this.users = users;
+    }
+
+    public String getColor() {
+        return color;
+    }
+    public void setColor(String color) {
+        this.color = color;
     }
 }
