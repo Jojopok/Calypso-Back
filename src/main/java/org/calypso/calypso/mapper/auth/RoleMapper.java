@@ -10,12 +10,14 @@ public class RoleMapper {
     public Role toEntity(RoleDTO dto) {
         Role role = new Role();
         role.setRole(dto.getRole());
+        role.setColor(dto.getColor());
         return role;
     }
 
     public RoleDTO toDto(Role role) {
         RoleDTO dto = new RoleDTO();
         dto.setRole(role.getRole());
+        dto.setColor(role.getColor());
         return dto;
     }
 }

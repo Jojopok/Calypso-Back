@@ -21,8 +21,9 @@ public class RoleController {
 
     @PostMapping
     public ResponseEntity<RoleDTO> createRole(@RequestBody RoleDTO roleDTO) {
-        Role role = roleService.createRole(roleDTO.getRole());
+        Role role = roleService.createRole(roleDTO.getRole(), roleDTO.getColor());
         roleDTO.setId(role.getId());
+        roleDTO.setColor(role.getColor());
         return ResponseEntity.ok(roleDTO);
     }
 
@@ -34,6 +35,7 @@ public class RoleController {
                     RoleDTO dto = new RoleDTO();
                     dto.setId(role.getId());
                     dto.setRole(role.getRole());
+                    dto.setColor(role.getColor());
                     return dto;
                 })
                 .collect(Collectors.toList());
