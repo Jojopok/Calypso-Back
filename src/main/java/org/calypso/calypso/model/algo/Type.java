@@ -18,6 +18,9 @@ public class Type {
     @ManyToMany(mappedBy = "types")
     private Set<Algo> algos;
 
+    @Column(name = "color", nullable = true)
+    private String color;
+
     public Long getId() {
         return id;
     }
@@ -36,6 +39,14 @@ public class Type {
 
     public Set<Algo> getAlgos() {
         return algos;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
     }
 
     public void setAlgos(Set<Algo> algos) {
