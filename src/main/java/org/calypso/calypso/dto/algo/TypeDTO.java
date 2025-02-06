@@ -5,6 +5,7 @@ public class TypeDTO {
     private Long id;
     private String type;
     private String color;
+    private String logo;
 
     public Long getId() {
         return id;
@@ -28,5 +29,13 @@ public class TypeDTO {
 
     public void setColor(String color) {
         this.color = color;
+    }
+
+    public String getLogo() {
+        return logo;
+    }
+
+    public void setLogo(String logo) {
+        this.logo = logo;
     }
 }

@@ -21,6 +21,9 @@ public class Type {
     @Column(name = "color", nullable = true)
     private String color;
 
+    @Column(name = "logo", nullable = true)
+    private String logo;
+
     public Long getId() {
         return id;
     }
@@ -51,5 +54,13 @@ public class Type {
 
     public void setAlgos(Set<Algo> algos) {
         this.algos = algos;
+    }
+
+    public String getLogo() {
+        return logo;
+    }
+
+    public void setLogo(String logo) {
+        this.logo = logo;
     }
 }
