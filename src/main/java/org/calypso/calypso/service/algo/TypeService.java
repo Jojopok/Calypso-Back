@@ -44,6 +44,7 @@ public class TypeService {
             return null;
         }
         type.setType(typeDetails.getType());
+        type.setColor(typeDetails.getColor());
         Type updatedType = typeRepository.save(type);
         return typeMapper.convertToDTO(updatedType);
     }
