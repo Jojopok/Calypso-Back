@@ -1,6 +1,7 @@
 package org.calypso.calypso.dto.algo;
 
 import java.util.Date;
+import java.util.Set;
 
 public class AlgoDTO {
 
@@ -12,6 +13,8 @@ public class AlgoDTO {
     private Date createdAt;
     private Date updatedAt;
     private Long userId;
+    private Long difficultyId;
+    private Set<Long> typeIds;
 
     // Getters and Setters
     public Long getId() {
@@ -76,5 +79,21 @@ public class AlgoDTO {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public Long getDifficultyId() {
+        return difficultyId;
+    }
+
+    public void setDifficultyId(Long difficultyId) {
+        this.difficultyId = difficultyId;
+    }
+
+    public Set<Long> getTypeIds() {
+        return typeIds;
+    }
+
+    public void setTypeIds(Set<Long> typeIds) {
+        this.typeIds = typeIds;
     }
 }
