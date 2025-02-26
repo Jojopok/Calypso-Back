@@ -8,10 +8,6 @@ import java.util.Set;
 
 @Entity
 @Table(name = "T_ALGO_Algo")
-@NamedEntityGraph(
-        name = "Algo.withTypes",
-        attributeNodes = @NamedAttributeNode("types")
-)
 public class Algo {
 
     @Id
