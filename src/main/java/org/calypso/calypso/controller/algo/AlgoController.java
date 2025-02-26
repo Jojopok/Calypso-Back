@@ -27,10 +27,15 @@ public class AlgoController {
     @GetMapping
     public ResponseEntity<List<AlgoDTO>> getAllAlgos() {
         List<Algo> algos = algoRepository.findAll();
+
         if (algos.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
-        List<AlgoDTO> algoDTOs = algos.stream().map(algoMapper::convertToDTO).collect(Collectors.toList());
+
+        List<AlgoDTO> algoDTOs = algos.stream()
+                .map(algoMapper::convertToDTO)
+                .collect(Collectors.toList());
+
         return ResponseEntity.ok(algoDTOs);
     }
 
