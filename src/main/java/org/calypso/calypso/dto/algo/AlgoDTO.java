@@ -14,7 +14,7 @@ public class AlgoDTO {
     private Date updatedAt;
     private Long userId;
     private Long difficultyId;
-    private Set<Long> typeIds;
+    private Set<TypeDTO> type;
 
     // Getters and Setters
     public Long getId() {
@@ -89,11 +89,11 @@ public class AlgoDTO {
         this.difficultyId = difficultyId;
     }
 
-    public Set<Long> getTypeIds() {
-        return typeIds;
+    public Set<TypeDTO> getType() {
+        return type;
     }
 
-    public void setTypeIds(Set<Long> typeIds) {
-        this.typeIds = typeIds;
+    public void setType(Set<TypeDTO> type) {
+        this.type = type;
     }
 }
