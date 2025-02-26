@@ -7,6 +7,7 @@ public class TypeDTO {
     private String color;
     private String logo;
 
+    // Getters and Setters
     public Long getId() {
         return id;
     }

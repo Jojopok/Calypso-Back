@@ -1,17 +1,15 @@
 package org.calypso.calypso.mapper.algo;
 
 import org.calypso.calypso.dto.algo.AlgoDTO;
+import org.calypso.calypso.dto.algo.TypeDTO;
 import org.calypso.calypso.model.algo.Algo;
-import org.calypso.calypso.model.algo.Difficulty;
 import org.calypso.calypso.model.algo.Type;
 import org.calypso.calypso.model.auth.User;
-import org.calypso.calypso.repository.algo.DifficultyRepository;
 import org.calypso.calypso.repository.algo.TypeRepository;
 import org.calypso.calypso.repository.auth.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -20,9 +18,6 @@ public class AlgoMapper {
 
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private DifficultyRepository difficultyRepository;
 
     @Autowired
     private TypeRepository typeRepository;
@@ -42,16 +37,12 @@ public class AlgoMapper {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         algo.setUser(user);
 
-        // Récupérer la difficulté
-        if (algoDTO.getDifficultyId() != null) {
-            Difficulty difficulty = difficultyRepository.findById(algoDTO.getDifficultyId())
-                    .orElseThrow(() -> new RuntimeException("Difficulty not found"));
-            algo.setDifficulty(difficulty);
-        }
-
         // Récupérer les types
-        if (algoDTO.getTypeIds() != null && !algoDTO.getTypeIds().isEmpty()) {
-            Set<Type> types = new HashSet<>(typeRepository.findAllById(algoDTO.getTypeIds()));
+        if (algoDTO.getType() != null && !algoDTO.getType().isEmpty()) {
+            Set<Type> types = algoDTO.getType().stream()
+                    .map(typeDTO -> typeRepository.findById(typeDTO.getId())
+                            .orElseThrow(() -> new RuntimeException("Type not found")))
+                    .collect(Collectors.toSet());
             algo.setTypes(types);
         }
 
@@ -69,16 +60,23 @@ public class AlgoMapper {
         algoDTO.setUpdatedAt(algo.getUpdatedAt());
         algoDTO.setUserId(algo.getUser().getId());
 
-        // Associer la difficulté
-        if (algo.getDifficulty() != null) {
-            algoDTO.setDifficultyId(algo.getDifficulty().getId());
-        }
-
         // Associer les types
         if (algo.getTypes() != null) {
-            algoDTO.setTypeIds(algo.getTypes().stream().map(Type::getId).collect(Collectors.toSet()));
+            Set<TypeDTO> typeDTOs = algo.getTypes().stream()
+                    .map(this::convertTypeToDTO)
+                    .collect(Collectors.toSet());
+            algoDTO.setType(typeDTOs);
         }
 
         return algoDTO;
+    }
+
+    private TypeDTO convertTypeToDTO(Type type) {
+        TypeDTO typeDTO = new TypeDTO();
+        typeDTO.setId(type.getId());
+        typeDTO.setType(type.getType());
+        typeDTO.setColor(type.getColor());
+        typeDTO.setLogo(type.getLogo());
+        return typeDTO;
     }
 }
