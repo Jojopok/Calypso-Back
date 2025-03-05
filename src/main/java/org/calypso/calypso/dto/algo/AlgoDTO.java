@@ -15,9 +15,9 @@ public class AlgoDTO {
     private Date createdAt;
     private Date updatedAt;
     private Long userId;
+    private Long difficultyId;
     private Set<TypeDTO> type;
     private Set<UserAnswerDTO> userAnswer;
-    private Set<DifficultyDTO> difficulty;
 
     // Getters and Setters
     public Long getId() {
@@ -84,6 +84,14 @@ public class AlgoDTO {
         this.userId = userId;
     }
 
+    public Long getDifficultyId() {
+        return difficultyId;
+    }
+
+    public void setDifficultyId(Long difficultyId) {
+        this.difficultyId = difficultyId;
+    }
+
     public Set<TypeDTO> getType() {
         return type;
     }
@@ -106,13 +114,5 @@ public class AlgoDTO {
 
     public void setUserAnswer(Set<UserAnswerDTO> userAnswer) {
         this.userAnswer = userAnswer;
-    }
-
-    public Set<DifficultyDTO> getDifficulty() {
-        return difficulty;
-    }
-
-    public void setDifficulty(Set<DifficultyDTO> difficulty) {
-        this.difficulty = difficulty;
     }
 }
