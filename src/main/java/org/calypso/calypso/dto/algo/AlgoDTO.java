@@ -1,5 +1,7 @@
 package org.calypso.calypso.dto.algo;
 
+import org.calypso.calypso.model.algo.Difficulty;
+
 import java.util.Date;
 import java.util.Set;
 
@@ -13,8 +15,9 @@ public class AlgoDTO {
     private Date createdAt;
     private Date updatedAt;
     private Long userId;
-    private Long difficultyId;
     private Set<TypeDTO> type;
+    private Set<UserAnswerDTO> userAnswer;
+    private Set<DifficultyDTO> difficulty;
 
     // Getters and Setters
     public Long getId() {
@@ -81,19 +84,35 @@ public class AlgoDTO {
         this.userId = userId;
     }
 
-    public Long getDifficultyId() {
-        return difficultyId;
-    }
-
-    public void setDifficultyId(Long difficultyId) {
-        this.difficultyId = difficultyId;
-    }
-
     public Set<TypeDTO> getType() {
         return type;
     }
 
     public void setType(Set<TypeDTO> type) {
         this.type = type;
+    }
+
+    public Boolean getVisible() {
+        return isVisible;
+    }
+
+    public void setVisible(Boolean visible) {
+        isVisible = visible;
+    }
+
+    public Set<UserAnswerDTO> getUserAnswer() {
+        return userAnswer;
+    }
+
+    public void setUserAnswer(Set<UserAnswerDTO> userAnswer) {
+        this.userAnswer = userAnswer;
+    }
+
+    public Set<DifficultyDTO> getDifficulty() {
+        return difficulty;
+    }
+
+    public void setDifficulty(Set<DifficultyDTO> difficulty) {
+        this.difficulty = difficulty;
     }
 }
