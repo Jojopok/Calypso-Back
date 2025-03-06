@@ -2,9 +2,12 @@ package org.calypso.calypso.mapper.algo;
 
 import org.calypso.calypso.dto.algo.AlgoDTO;
 import org.calypso.calypso.dto.algo.TypeDTO;
+import org.calypso.calypso.dto.algo.UserAnswerDTO;
 import org.calypso.calypso.model.algo.Algo;
+import org.calypso.calypso.model.algo.Difficulty;
 import org.calypso.calypso.model.algo.Type;
 import org.calypso.calypso.model.auth.User;
+import org.calypso.calypso.repository.algo.DifficultyRepository;
 import org.calypso.calypso.repository.algo.TypeRepository;
 import org.calypso.calypso.repository.auth.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +24,12 @@ public class AlgoMapper {
 
     @Autowired
     private TypeRepository typeRepository;
+
+    @Autowired
+    private UserAnswerMapper userAnswerMapper;
+
+    @Autowired
+    private DifficultyRepository difficultyRepository;
 
     public Algo convertToEntity(AlgoDTO algoDTO) {
         Algo algo = new Algo();
@@ -46,6 +55,13 @@ public class AlgoMapper {
             algo.setTypes(types);
         }
 
+        // Récupérer la difficulté
+        if (algoDTO.getDifficultyId() != null) {
+            Difficulty difficulty = difficultyRepository.findById(algoDTO.getDifficultyId())
+                    .orElseThrow(() -> new RuntimeException("Difficulty not found"));
+            algo.setDifficulty(difficulty);
+        }
+
         return algo;
     }
 
@@ -66,6 +82,19 @@ public class AlgoMapper {
                     .map(this::convertTypeToDTO)
                     .collect(Collectors.toSet());
             algoDTO.setType(typeDTOs);
+        }
+
+        // Associer les réponses des utilisateurs
+        if (algo.getUserAnswers() != null) {
+            Set<UserAnswerDTO> userAnswerDTOs = algo.getUserAnswers().stream()
+                    .map(userAnswerMapper::convertToDTO)
+                    .collect(Collectors.toSet());
+            algoDTO.setUserAnswer(userAnswerDTOs);
+        }
+
+        // Associer la difficulté
+        if (algo.getDifficulty() != null) {
+            algoDTO.setDifficultyId(algo.getDifficulty().getId());
         }
 
         return algoDTO;
