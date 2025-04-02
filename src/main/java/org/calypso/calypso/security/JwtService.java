@@ -18,7 +18,7 @@ public class JwtService {
     @Value("${security.jwt.secret-key}")
     private String secretKey;
 
-    @Value("${security.jwt.expiration-time}")
+    @Value("${SECURITY_JWT_SECRET_KEY}")
     private long jwtExpiration;
 
 
