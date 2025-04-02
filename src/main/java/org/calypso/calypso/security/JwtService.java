@@ -15,10 +15,10 @@ import java.util.Set;
 @Service
 public class JwtService {
 
-    @Value("${security.jwt.secret-key}")
+    @Value("${SECURITY_JWT_SECRET_KEY}")
     private String secretKey;
 
-    @Value("${SECURITY_JWT_SECRET_KEY}")
+    @Value("${security.jwt.expiration-time}")
     private long jwtExpiration;
 
 
