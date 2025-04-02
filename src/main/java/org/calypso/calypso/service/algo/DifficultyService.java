@@ -48,11 +48,10 @@ public class DifficultyService {
     }
 
     public boolean deleteDifficulty(Long id) {
-        Difficulty difficulty = difficultyRepository.findById(id).orElse(null);
-        if (difficulty == null) {
-            return false;
+        if (difficultyRepository.existsById(id)) {
+            difficultyRepository.deleteById(id);
+            return true;
         }
-        difficultyRepository.delete(difficulty);
-        return true;
+        return false;
     }
 }

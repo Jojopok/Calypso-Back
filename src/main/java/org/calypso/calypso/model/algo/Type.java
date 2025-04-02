@@ -18,6 +18,12 @@ public class Type {
     @ManyToMany(mappedBy = "types")
     private Set<Algo> algos;
 
+    @Column(name = "color", nullable = true)
+    private String color;
+
+    @Column(name = "logo", nullable = true)
+    private String logo;
+
     public Long getId() {
         return id;
     }
@@ -38,7 +44,23 @@ public class Type {
         return algos;
     }
 
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
     public void setAlgos(Set<Algo> algos) {
         this.algos = algos;
+    }
+
+    public String getLogo() {
+        return logo;
+    }
+
+    public void setLogo(String logo) {
+        this.logo = logo;
     }
 }

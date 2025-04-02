@@ -3,6 +3,7 @@ package org.calypso.calypso.dto.auth;
 public class RoleDTO {
     private Long id;
     private String role;
+    private String color;
 
     public Long getId() {
         return id;
@@ -18,5 +19,13 @@ public class RoleDTO {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
     }
 }

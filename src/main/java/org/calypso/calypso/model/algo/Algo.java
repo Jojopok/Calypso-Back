@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import org.calypso.calypso.model.auth.User;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -33,6 +34,9 @@ public class Algo {
     @Column(name = "updated_at")
     private Date updatedAt;
 
+    @OneToMany(mappedBy = "algo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<UserAnswer> userAnswers = new HashSet<>();
+
     @ManyToOne
     @JoinColumn(name = "difficulty_id")
     private Difficulty difficulty;
@@ -47,6 +51,8 @@ public class Algo {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
+
+
     private User user;
 
     public Long getId() {
@@ -135,5 +141,13 @@ public class Algo {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Set<UserAnswer> getUserAnswers() {
+        return userAnswers;
+    }
+
+    public void setUserAnswers(Set<UserAnswer> userAnswers) {
+        this.userAnswers = userAnswers;
     }
 }

@@ -37,19 +37,23 @@ public class BugService {
     }
 
     public BugDTO updateBug(Long id, Bug bug) {
-        if (!bugRepository.existsById(id)) {
-            return null;
-        }
-        bug.setId(id);
-        Bug updatedBug = bugRepository.save(bug);
-        return bugMapper.convertToDTO(updatedBug);
+        return bugRepository.findById(id)
+                .map(existingBug -> {
+                    existingBug.setContent(bug.getContent());
+                    existingBug.setIsResolved(bug.getIsResolved());
+                    existingBug.setAlgo(bug.getAlgo());
+                    existingBug.setUser(bug.getUser());
+                    Bug updatedBug = bugRepository.save(existingBug);
+                    return bugMapper.convertToDTO(updatedBug);
+                })
+                .orElse(null);
     }
 
     public boolean deleteBug(Long id) {
-        if (!bugRepository.existsById(id)) {
-            return false;
+        if (bugRepository.existsById(id)) {
+            bugRepository.deleteById(id);
+            return true;
         }
-        bugRepository.deleteById(id);
-        return true;
+        return false;
     }
 }

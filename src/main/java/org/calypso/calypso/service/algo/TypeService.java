@@ -44,16 +44,17 @@ public class TypeService {
             return null;
         }
         type.setType(typeDetails.getType());
+        type.setColor(typeDetails.getColor());
+        type.setLogo(typeDetails.getLogo());
         Type updatedType = typeRepository.save(type);
         return typeMapper.convertToDTO(updatedType);
     }
 
     public boolean deleteType(Long id) {
-        Type type = typeRepository.findById(id).orElse(null);
-        if (type == null) {
-            return false;
+        if (typeRepository.existsById(id)) {
+            typeRepository.deleteById(id);
+            return true;
         }
-        typeRepository.delete(type);
-        return true;
+        return false;
     }
 }

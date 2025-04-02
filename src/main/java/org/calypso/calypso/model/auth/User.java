@@ -47,6 +47,13 @@ public class User implements UserDetails {
     )
     private Set<Role> roles = new HashSet<>();
 
+    // Méthode pour récupérer uniquement les IDs des rôles
+    public Set<Long> getRoleIds() {
+        return roles.stream()
+                .map(Role::getId) // Récupère les IDs des rôles
+                .collect(Collectors.toSet());
+    }
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "T_AUTH_Promo_User",
@@ -136,7 +143,7 @@ public class User implements UserDetails {
         this.promos = promos;
     }
 
-    @Override
+
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream()
                 .map(role -> new SimpleGrantedAuthority(role.getRole()))

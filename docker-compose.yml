@@ -1,0 +1,43 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: java -jar app.jar --server.port=8081
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: ${SPRING_JPA_HIBERNATE_DDL_AUTO}
+      CORS_ALLOWED_ORIGIN: ${CORS_ALLOWED_ORIGIN}
+      SECURITY_JWT_SECRET_KEY: ${SECURITY_JWT_SECRET_KEY}
+      JWT_EXPIRATION_TIME: ${JWT_EXPIRATION_TIME}
+      SERVER_PORT: ${SERVER_PORT}
+    depends_on:
+      - db
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.api-calypso.rule=Host("api-calypso.wcs-students.fr")
+      - traefik.http.routers.api-calypso.entrypoints=websecure
+      - traefik.http.routers.api-calypso.tls.certresolver=letsencrypt
+      - traefik.http.services.api-calypso.loadbalancer.server.port=8081
+    networks:
+      - traefik
+
+  db: # Service pour la base de données
+    image: mysql:8
+    restart: always
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+    volumes:
+      - db-data:/var/lib/mysql
+
+volumes:
+  db-data:
+networks:
+  traefik:
+    external: true
