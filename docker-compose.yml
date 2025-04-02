@@ -15,7 +15,7 @@ services:
       JWT_EXPIRATION_TIME: ${JWT_EXPIRATION_TIME}
       SERVER_PORT: ${SERVER_PORT}
     depends_on:
-      - db
+      - calypso-db
     labels:
       - traefik.enable=true
       - traefik.http.routers.api-calypso.rule=Host("api-calypso.wcs-students.fr")
@@ -25,7 +25,7 @@ services:
     networks:
       - traefik
 
-  db: # Service pour la base de données
+  calypso-db: # Service pour la base de données
     image: mysql:8
     restart: always
     ports:
