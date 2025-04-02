@@ -1,0 +1,108 @@
+name: CI/CD Spring Boot
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+      - feat/**
+
+jobs:
+  build-and-test:
+    name: 🧲 Build & Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📅 Checkout code
+        uses: actions/checkout@v3
+
+      - name: ☕ Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: 📦 Cache Maven dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+
+      - name: 🧲 Run tests
+        run: ./mvnw clean test
+
+      - name: 📦 Package app
+        run: ./mvnw clean package -DskipTests
+
+      - name: 📁 Préparer fichiers pour le déploiement
+        run: |
+          mkdir deploy
+          cp target/calypso-0.0.1-SNAPSHOT.jar deploy/app.jar
+          cp Dockerfile deploy/
+          cp docker-compose.yml deploy/
+
+      - name: 📄 Sauvegarder fichiers dans un artefact
+        uses: actions/upload-artifact@v4
+        with:
+          name: spring-deploy
+          path: deploy/
+
+  deploy:
+    name: 🚀 Déployer sur le VPS
+    needs: build-and-test
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Télécharger les fichiers de build
+        uses: actions/download-artifact@v4
+        with:
+          name: spring-deploy
+          path: spring-deploy
+
+      - name: 🔐 Ajouter la clé SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519_${{ secrets.PROJECT_NAME }}
+          chmod 600 ~/.ssh/id_ed25519_${{ secrets.PROJECT_NAME }}
+          ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+
+      - name: 📤 Copier les fichiers sur le VPS
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: |
+            spring-deploy/*
+          target: /home/${{ secrets.SERVER_USER }}/${{ secrets.PROJECT_NAME }}
+
+      - name: 📂 Déplacer les fichiers à la racine du projet sur le VPS
+        run: |
+          ssh -i ~/.ssh/id_ed25519_${{ secrets.PROJECT_NAME }} -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} "
+            mv /home/${{ secrets.SERVER_USER }}/${{ secrets.PROJECT_NAME }}/spring-deploy/* /home/${{ secrets.SERVER_USER }}/${{ secrets.PROJECT_NAME }}/
+          "
+
+      - name: 🔐 Générer le fichier .env.prod sur le VPS
+        run: |
+          ssh -i ~/.ssh/id_ed25519_${{ secrets.PROJECT_NAME }} -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} "
+            echo 'SPRING_PROFILES_ACTIVE=prod' > /home/${{ secrets.SERVER_USER }}/${{ secrets.PROJECT_NAME }}/.env.prod &&
+            echo 'DB_NAME=${{ secrets.DB_NAME }}' >> /home/${{ secrets.SERVER_USER }}/${{ secrets.PROJECT_NAME }}/.env.prod &&
+            echo 'SPRING_DATASOURCE_URL=${{ secrets.SPRING_DATASOURCE_URL }}' >> /home/${{ secrets.SERVER_USER }}/${{ secrets.PROJECT_NAME }}/.env.prod &&
+            echo 'SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}' >> /home/${{ secrets.SERVER_USER }}/${{ secrets.PROJECT_NAME }}/.env.prod &&
+            echo 'SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}' >> /home/${{ secrets.SERVER_USER }}/${{ secrets.PROJECT_NAME }}/.env.prod &&
+            echo 'SPRING_JPA_HIBERNATE_DDL_AUTO=${{ secrets.SPRING_JPA_HIBERNATE_DDL_AUTO }}' >> /home/${{ secrets.SERVER_USER }}/${{ secrets.PROJECT_NAME }}/.env.prod &&
+            echo 'SECURITY_JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}' >> /home/${{ secrets.SERVER_USER }}/${{ secrets.PROJECT_NAME }}/.env.prod &&
+            echo 'JWT_EXPIRATION_TIME=${{ secrets.JWT_EXPIRATION_TIME }}' >> /home/${{ secrets.SERVER_USER }}/${{ secrets.PROJECT_NAME }}/.env.prod &&
+            echo 'CORS_ALLOWED_ORIGIN=${{ secrets.CORS_ALLOWED_ORIGIN }}' >> /home/${{ secrets.SERVER_USER }}/${{ secrets.PROJECT_NAME }}/.env.prod &&
+            echo 'SERVER_PORT=8081' >> /home/${{ secrets.SERVER_USER }}/${{ secrets.PROJECT_NAME }}/.env.prod &&
+            chmod 600 /home/${{ secrets.SERVER_USER }}/${{ secrets.PROJECT_NAME }}/.env.prod
+          "
+
+      - name: 🐳 Lancer docker compose sur le VPS.
+        run: |
+          ssh -i ~/.ssh/id_ed25519_${{ secrets.PROJECT_NAME }} -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} "
+            cd /home/${{ secrets.SERVER_USER }}/${{ secrets.PROJECT_NAME }} &&
+            docker compose --env-file .env.prod down --remove-orphans || true &&
+            docker compose --env-file .env.prod up -d --build
+          "
