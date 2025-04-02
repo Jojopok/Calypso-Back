@@ -20,6 +20,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findByEmailContaining(String email);
     List<User> findAllByOrderByIdAsc();
 
+
     @Query("SELECT u FROM User u JOIN u.promos p WHERE p.id = :promoId")
     List<User> findByPromos(Long promoId);
+
 }

@@ -3,8 +3,11 @@ package org.calypso.calypso.controller.auth;
 import org.calypso.calypso.dto.auth.UserDTO;
 import org.calypso.calypso.mapper.auth.UserMapper;
 import org.calypso.calypso.model.auth.User;
+
 import org.calypso.calypso.service.auth.RoleService;
+
 import org.calypso.calypso.service.auth.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +32,7 @@ public class UserController {
                 .collect(Collectors.toList());
         return ResponseEntity.ok(users);
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
@@ -61,5 +65,6 @@ public class UserController {
 
         // Retourner la réponse avec l'utilisateur mis à jour
         return ResponseEntity.ok(updatedUserDTO);
+
     }
 }

@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -63,6 +64,7 @@ public class UserService {
         return userRepository.findAll();
     }
 
+
     public Long getUserIdByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Utilisateur non trouvé avec l'email : " + email))
@@ -73,4 +75,5 @@ public class UserService {
     public User updateUser(User user) {
         return userRepository.save(user);
     }
+
 }

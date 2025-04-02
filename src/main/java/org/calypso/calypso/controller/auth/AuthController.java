@@ -10,18 +10,20 @@ import org.calypso.calypso.model.auth.User;
 import org.calypso.calypso.security.AuthenticationService;
 import org.calypso.calypso.security.JwtService;
 import org.calypso.calypso.service.auth.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.GrantedAuthority;
 
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import java.util.stream.Collectors;
 
 @RestController
@@ -58,10 +60,12 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> authenticate(@RequestBody UserLoginDTO userLoginDTO) {
         // Authentifier l'utilisateur
+
         String token = authenticationService.authenticate(
                 userLoginDTO.getEmail(),
                 userLoginDTO.getPassword()
         );
+
 
         // Récupérer l'utilisateur complet depuis la base de données
         User user = userService.getUserByEmail(userLoginDTO.getEmail());

@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.calypso.calypso.model.auth.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ public class JwtService {
     @Value("${security.jwt.expiration-time}")
     private long jwtExpiration;
 
+
     /**
      * Générer un token JWT avec uniquement l'ID utilisateur
      */
@@ -28,6 +30,7 @@ public class JwtService {
                 .setSubject(String.valueOf(userId))  // ID utilisateur dans le `sub`
                 .claim("email", email)
                 .claim("roleIds", roleIds)
+
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
                 .signWith(SignatureAlgorithm.HS256, secretKey.getBytes())
